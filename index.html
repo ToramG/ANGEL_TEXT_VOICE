@@ -4,68 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Angel Text Voice - 8-bit Sound Generator</title>
-    <meta name="description" content="8-bit sound generator with precise controls and custom save paths.">
-    
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        
-        body {
-            background: linear-gradient(135deg, #fce4ec 0%, #e1f5fe 100%);
-            color: #5d4037;
-            font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif;
-            min-height: 100vh;
-            margin: 0;
-        }
-
+        body { background: linear-gradient(135deg, #fce4ec 0%, #e1f5fe 100%); color: #5d4037; font-family: "Malgun Gothic", sans-serif; min-height: 100vh; margin: 0; }
         .font-retro { font-family: 'Press Start 2P', cursive; }
-
-        .pixel-border {
-            background-color: rgba(255, 255, 255, 0.8);
-            border: 4px solid #b3e5fc;
-            box-shadow: 4px 4px 0px #f8bbd0;
-            border-radius: 12px;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 12px;
-            height: 18px;
-            background: #f06292;
-            animation: blink 0.8s infinite;
-            vertical-align: middle;
-            margin-left: 4px;
-        }
+        .pixel-border { background-color: rgba(255, 255, 255, 0.8); border: 4px solid #b3e5fc; box-shadow: 4px 4px 0px #f8bbd0; border-radius: 12px; }
+        .cursor { display: inline-block; width: 12px; height: 18px; background: #f06292; animation: blink 0.8s infinite; vertical-align: middle; margin-left: 4px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
         input[type="range"] { accent-color: #f06292; }
         .btn-pastel { transition: all 0.2s; box-shadow: 2px 2px 0px #888; }
         .btn-pastel:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #888; }
-
-        .num-input {
-            background: #fff;
-            border: 2px solid #f8bbd0;
-            border-radius: 6px;
-            width: 70px;
-            text-align: center;
-            color: #f06292;
-            font-weight: bold;
-            outline: none;
-        }
-
-        .wing-img {
-            width: 60px;
-            height: auto;
-            object-fit: contain;
-            filter: drop-shadow(2px 2px 0px rgba(255, 255, 255, 0.8));
-            user-select: none;
-            pointer-events: none;
-        }
-        
+        .num-input { background: #fff; border: 2px solid #f8bbd0; border-radius: 6px; width: 70px; text-align: center; color: #f06292; font-weight: bold; outline: none; }
+        .wing-img { width: 60px; height: auto; filter: drop-shadow(2px 2px 0px rgba(255, 255, 255, 0.8)); user-select: none; pointer-events: none; }
         .wing-left-anim { animation: floatLeft 3s ease-in-out infinite; }
         .wing-right-anim { animation: floatRight 3s ease-in-out infinite; }
-
         @keyframes floatLeft { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes floatRight { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
@@ -87,7 +41,7 @@
                 <h1 id="main-title" class="text-xl md:text-2xl text-pink-400 drop-shadow-sm font-retro text-center">ANGEL TEXT VOICE</h1>
                 <img src="wing_right.png" class="wing-img wing-right-anim" alt="Wing Right">
             </div>
-            <p id="sub-title" class="text-[10px] text-blue-400 uppercase tracking-widest font-bold">꿈결 같은 8비트 효과음 생성기</p>
+            <p id="sub-title" class="text-[10px] text-blue-400 uppercase tracking-widest font-bold text-center"></p>
         </header>
 
         <div class="pixel-border p-8 min-h-[180px] relative bg-white/60 backdrop-blur-sm">
@@ -159,8 +113,8 @@
     <script>
         const i18n = {
             ko: { sub: "꿈결 같은 8비트 효과음 생성기", speed: "타이핑 속도", pitch: "음 높이 (피치)", tone: "음색 선택", start: "재생", save: "저장 (WAV)", placeholder: "여기에 대사를 입력하세요...", guide: "저장 버튼을 누르면 경로를 지정하여 WAV 파일로 저장할 수 있습니다." },
-            en: { sub: "Dreamy 8-bit sound creator", speed: "Typing Speed", pitch: "Voice Pitch", tone: "Tone Type", start: "Start", save: "Save WAV", placeholder: "Please enter your text here...", guide: "Click SAVE WAV to choose a location and save the dialogue." },
-            jp: { sub: "夢のような8ビット効果음メーカー", speed: "タイピング速度", pitch: "音の高さ", tone: "音色の種類", start: "再生", save: "保存 (WAV)", placeholder: "ここにテキストを入力してください...", guide: "保存 버튼을 누르면 経路를 指定하여 WAV 파일로 저장할 수 있습니다." },
+            en: { sub: "Dreamy 8-bit sound creator", speed: "Typing Speed", pitch: "Voice Pitch", tone: "Tone Type", start: "Start", save: "Save WAV", placeholder: "Please enter your text here...", guide: "Click SAVE WAV to choose a location and save the audio." },
+            jp: { sub: "夢のような8ビット効果音メーカー", speed: "タイ핑速度", pitch: "音の高さ", tone: "音色の種類", start: "再生", save: "保存 (WAV)", placeholder: "ここにテキストを入力してください...", guide: "保存 버튼을 누르면 経路를 指定하여 WAV 파일로 저장할 수 있습니다." },
             cn: { sub: "梦幻8位元声音生成器", speed: "打字速度", pitch: "音高", tone: "音色类型", start: "开始", save: "保存 (WAV)", placeholder: "请在这里输入文字...", guide: "点击保存按钮，选择路径将此对话保存为WAV文件。" }
         };
 
@@ -177,27 +131,17 @@
             wave: document.getElementById('waveform')
         };
 
-        function updateLang() {
-            const l = i18n[elements.lang.value];
-            elements.sub.textContent = l.sub; elements.lSpeed.textContent = l.speed;
-            elements.lPitch.textContent = l.pitch; elements.lTone.textContent = l.tone;
-            elements.play.textContent = l.start; elements.save.textContent = l.save;
-            elements.input.placeholder = l.placeholder;
-            if(!isPlaying) elements.display.textContent = l.guide;
-        }
-
-        function syncValues(type) {
-            if(type === 'speed') {
-                elements.speedNum.value = elements.speed.value;
-            } else {
-                elements.pitchNum.value = elements.pitch.value;
+        async function initAudio() { 
+            if (!audioCtx) { 
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+                dest = audioCtx.createMediaStreamDestination(); 
             }
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
         }
-
-        function initAudio() { if (!audioCtx) { audioCtx = new AudioContext(); dest = audioCtx.createMediaStreamDestination(); } }
 
         function playBeep(pitchModifier = 1) {
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            const osc = audioCtx.createOscillator(); 
+            const gain = audioCtx.createGain();
             let waveType = elements.wave.value;
             let finalPitch = parseInt(elements.pitch.value) * pitchModifier;
 
@@ -209,8 +153,13 @@
             osc.frequency.setValueAtTime(finalPitch + (Math.random()*20-10), audioCtx.currentTime);
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-            osc.connect(gain); gain.connect(audioCtx.destination); gain.connect(dest);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+            
+            osc.connect(gain); 
+            gain.connect(audioCtx.destination); 
+            gain.connect(dest);
+            
+            osc.start(); 
+            osc.stop(audioCtx.currentTime + 0.2);
         }
 
         async function saveFile(blob) {
@@ -219,50 +168,68 @@
                 try {
                     const handle = await window.showSaveFilePicker({
                         suggestedName: fileName,
-                        types: [{ description: 'WAV Audio File', accept: { 'audio/wav': ['.wav'] } }],
+                        types: [{ description: 'WAV Audio', accept: { 'audio/wav': ['.wav'] } }],
                     });
                     const writable = await handle.createWritable();
                     await writable.write(blob);
                     await writable.close();
                     return;
-                } catch (err) {
-                    if (err.name === 'AbortError') return;
-                }
+                } catch (err) { if (err.name === 'AbortError') return; }
             }
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
         }
 
         async function typeWriter(text, record = false) {
-            isPlaying = true; elements.display.textContent = "";
+            await initAudio();
+            isPlaying = true; 
+            elements.display.textContent = "";
+            
             if (record) { 
-                chunks = []; mediaRecorder = new MediaRecorder(dest.stream); 
-                mediaRecorder.ondataavailable = e => chunks.push(e.data); 
+                chunks = []; 
+                mediaRecorder = new MediaRecorder(dest.stream, { mimeType: 'audio/webm;codecs=opus' }); 
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
                 mediaRecorder.onstop = async () => { await saveFile(new Blob(chunks, { type: 'audio/wav' })); }; 
                 mediaRecorder.start(); 
             }
+
             const chars = Array.from(text);
             for (let i = 0; i < chars.length; i++) {
                 if (!isPlaying) break;
-                const char = chars[i];
-                elements.display.textContent += char;
+                elements.display.textContent += chars[i];
                 let delay = parseInt(elements.speed.value);
-                if (!/[\s,.?!~~\-…()]/.test(char)) playBeep();
-                else if (['.', '?', '!'].includes(char)) delay *= 4;
+                if (!/[\s,.?!~~\-…()]/.test(chars[i])) playBeep();
+                else if (['.', '?', '!'].includes(chars[i])) delay *= 4;
                 await new Promise(r => timeoutId = setTimeout(r, delay));
             }
-            if (record && mediaRecorder?.state !== "inactive") mediaRecorder.stop();
+
+            if (record) {
+                // 마지막 소리가 녹음기에 도달할 수 있게 0.5초 대기
+                await new Promise(r => setTimeout(r, 500));
+                if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+            }
             isPlaying = false;
         }
 
-        elements.speed.oninput = () => syncValues('speed');
-        elements.pitch.oninput = () => syncValues('pitch');
+        function updateLang() {
+            const l = i18n[elements.lang.value];
+            elements.sub.textContent = l.sub; elements.lSpeed.textContent = l.speed;
+            elements.lPitch.textContent = l.pitch; elements.lTone.textContent = l.tone;
+            elements.play.textContent = l.start; elements.save.textContent = l.save;
+            elements.input.placeholder = l.placeholder;
+            if(!isPlaying) elements.display.textContent = l.guide;
+        }
+
+        elements.speed.oninput = () => { elements.speedNum.value = elements.speed.value; };
+        elements.pitch.oninput = () => { elements.pitchNum.value = elements.pitch.value; };
         elements.speedNum.oninput = () => { elements.speed.value = elements.speedNum.value; };
         elements.pitchNum.oninput = () => { elements.pitch.value = elements.pitchNum.value; };
         elements.lang.onchange = updateLang;
-        elements.play.onclick = () => { initAudio(); if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder); };
-        elements.save.onclick = () => { initAudio(); if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder, true); };
+        elements.play.onclick = () => { if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder); };
+        elements.save.onclick = () => { if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder, true); };
         
-        syncValues('speed'); syncValues('pitch'); updateLang();
+        elements.speedNum.value = elements.speed.value;
+        elements.pitchNum.value = elements.pitch.value;
+        updateLang();
     </script>
 </body>
 </html>
