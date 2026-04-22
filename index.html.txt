@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Angel Text Voice - 8-bit Sound Generator</title>
+    <meta name="description" content="8-bit sound generator. Create retro game dialogue sounds and save as WAV.">
+    <meta name="keywords" content="8비트 효과음 생성기, 8-bit Sound Generator, Text to Beep, Retro SFX, RPG Voice Maker">
+    <meta name="author" content="toramxoxo">
+    
+    <meta property="og:title" content="Angel Text Voice - 8-bit Sound Generator">
+    <meta property="og:description" content="Create your own retro game voice with one click.">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        body {
+            background: linear-gradient(135deg, #fce4ec 0%, #e1f5fe 100%);
+            color: #5d4037;
+            font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif;
+            min-height: 100vh;
+        }
+
+        .font-retro {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .pixel-border {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 4px solid #b3e5fc;
+            box-shadow: 4px 4px 0px #f8bbd0;
+            border-radius: 12px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 18px;
+            background: #f06292;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        input[type="range"] { accent-color: #f06292; }
+        .btn-pastel { transition: all 0.2s; box-shadow: 2px 2px 0px #888; }
+        .btn-pastel:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #888; }
+        
+        .lang-text { font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif; }
+
+        /* 이미지 보안 및 스타일 설정 */
+        .wing-img {
+            width: 60px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(2px 2px 0px rgba(255, 255, 255, 0.8));
+            
+            /* 보안 설정: 우클릭 금지 및 드래그 금지 */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none; /* 마우스 클릭 이벤트 무시 */
+        }
+        
+        .wing-left { 
+            transform: scaleX(-1); 
+            animation: floatLeft 3s ease-in-out infinite; 
+        }
+        .wing-right { 
+            animation: floatRight 3s ease-in-out infinite; 
+        }
+
+        @keyframes floatLeft {
+            0%, 100% { transform: scaleX(-1) translateY(0); }
+            50% { transform: scaleX(-1) translateY(-10px); }
+        }
+        @keyframes floatRight {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-6 relative">
+    <div class="absolute top-6 right-6 lang-text">
+        <select id="lang-select" class="bg-white/80 border border-pink-200 p-2 rounded-lg text-xs outline-none cursor-pointer">
+            <option value="ko">한국어 (KO)</option>
+            <option value="en">English (EN)</option>
+            <option value="jp">日本語 (JP)</option>
+            <option value="cn">简体中文 (CN)</option>
+        </select>
+    </div>
+
+    <div class="max-w-3xl w-full space-y-8 z-10 mt-12">
+        <header class="flex flex-col items-center">
+            <div class="flex items-center justify-center gap-4 mb-2">
+                <img src="wing.png" class="wing-img wing-left" alt="Wing" oncontextmenu="return false;">
+                
+                <h1 id="main-title" class="text-xl md:text-2xl text-pink-400 drop-shadow-sm font-retro text-center">ANGEL TEXT VOICE</h1>
+                
+                <img src="wing.png" class="wing-img wing-right" alt="Wing" oncontextmenu="return false;">
+            </div>
+            <p id="sub-title" class="text-[10px] text-blue-400 uppercase tracking-widest font-bold">꿈결 같은 8비트 효과음 생성기</p>
+        </header>
+
+        <div class="pixel-border p-8 min-h-[180px] relative bg-white/60 backdrop-blur-sm">
+            <div id="display-container" class="text-sm leading-relaxed break-words text-pink-600 font-bold">
+                <span id="display-text"></span><span id="cursor" class="cursor"></span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/40 p-6 rounded-2xl text-xs border border-white/50">
+            <div class="space-y-4">
+                <label class="block">
+                    <div class="flex justify-between items-center mb-1">
+                        <span id="label-speed" class="text-blue-500 font-bold">타이핑 속도</span>
+                        <span id="speed-val" class="text-pink-400 font-bold">80ms</span>
+                    </div>
+                    <input type="range" id="speed" min="20" max="250" value="80" class="w-full">
+                </label>
+                <label class="block">
+                    <div class="flex justify-between items-center mb-1">
+                        <span id="label-pitch" class="text-blue-500 font-bold">음 높이 (피치)</span>
+                        <span id="pitch-val" class="text-pink-400 font-bold">600Hz</span>
+                    </div>
+                    <input type="range" id="pitch" min="200" max="1200" value="600" class="w-full">
+                </label>
+            </div>
+            <div class="space-y-4">
+                <label class="block">
+                    <span id="label-tone" class="text-blue-500 font-bold">음색 선택</span>
+                    <select id="waveform" class="w-full mt-2 bg-white/80 p-2 rounded border border-pink-200 outline-none font-bold">
+                        <option value="triangle">Soft Triangle</option>
+                        <option value="sine">Pure Sine</option>
+                        <option value="square">Retro Square</option>
+                        <option value="sawtooth">Sharp Sawtooth</option>
+                    </select>
+                </label>
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button id="play-btn" class="btn-pastel bg-pink-300 text-white p-3 rounded-lg font-bold uppercase">재생</button>
+                    <button id="save-btn" class="btn-pastel bg-blue-300 text-white p-3 rounded-lg font-bold uppercase">저장 (WAV)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full">
+            <textarea id="input-text" class="w-full h-32 p-4 bg-white/80 border-2 border-pink-100 rounded-2xl text-gray-700 focus:border-pink-300 outline-none shadow-inner font-bold"></textarea>
+        </div>
+        
+        <footer class="text-center space-y-3 pb-8">
+            <p id="footer-text" class="text-blue-300 text-[10px] font-bold uppercase tracking-wider">
+                * Recorded files are royalty-free for your projects! *
+            </p>
+            <div class="flex flex-col items-center gap-1">
+                <span class="text-gray-400 text-[9px] uppercase tracking-widest">Designed & Developed by</span>
+                <a href="https://instagram.com/toramxoxo" target="_blank" class="text-pink-400 text-[12px] font-bold hover:text-pink-500 transition-colors tracking-tight">
+                    INSTAGRAM @toramxoxo
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const i18n = {
+            ko: { sub: "꿈결 같은 8비트 효과음 생성기", speed: "타이핑 속도", pitch: "음 높이 (피치)", tone: "음색 선택", start: "재생", save: "저장 (WAV)", placeholder: "여기에 대사를 입력하세요...", guide: "저장 버튼을 누르면 이 대사의 소리가 WAV 파일로 저장됩니다." },
+            en: { sub: "Dreamy 8-bit sound creator", speed: "Typing Speed", pitch: "Voice Pitch", tone: "Tone Type", start: "Start", save: "Save WAV", placeholder: "Please enter your text here...", guide: "Click SAVE WAV to save the sound of this dialogue as a WAV file." },
+            jp: { sub: "夢のような8ビット効果音メーカー", speed: "タイピング速度", pitch: "音の高さ", tone: "音色の種類", start: "再生", save: "保存 (WAV)", placeholder: "ここにテキストを入力してください...", guide: "保存ボタンを押すと、この台詞がWAVファイルとして保存されます。" },
+            cn: { sub: "梦幻8位元声音生成器", speed: "打字速度", pitch: "音高", tone: "音色类型", start: "开始", save: "保存 (WAV)", placeholder: "请在这里输入文字...", guide: "点击保存按钮，将此对话保存为WAV文件。" }
+        };
+
+        let audioCtx = null, isPlaying = false, timeoutId = null, dest = null, mediaRecorder = null, chunks = [];
+
+        const elements = {
+            lang: document.getElementById('lang-select'), 
+            mainTitle: document.getElementById('main-title'),
+            sub: document.getElementById('sub-title'),
+            lSpeed: document.getElementById('label-speed'), 
+            lPitch: document.getElementById('label-pitch'),
+            lTone: document.getElementById('label-tone'), 
+            play: document.getElementById('play-btn'),
+            save: document.getElementById('save-btn'), 
+            input: document.getElementById('input-text'),
+            display: document.getElementById('display-text'), 
+            speed: document.getElementById('speed'),
+            pitch: document.getElementById('pitch'), 
+            wave: document.getElementById('waveform'),
+            container: document.getElementById('display-container'),
+            speedVal: document.getElementById('speed-val'),
+            pitchVal: document.getElementById('pitch-val')
+        };
+
+        function updateLang() {
+            const selectedLang = elements.lang.value;
+            const l = i18n[selectedLang];
+            elements.sub.textContent = l.sub;
+            elements.lSpeed.textContent = l.speed;
+            elements.lPitch.textContent = l.pitch;
+            elements.lTone.textContent = l.tone;
+            elements.play.textContent = l.start;
+            elements.save.textContent = l.save;
+            elements.input.placeholder = l.placeholder;
+            if(!isPlaying) elements.display.textContent = l.guide;
+
+            if (selectedLang === 'en') {
+                elements.container.classList.add('font-retro');
+                elements.sub.classList.add('font-retro');
+            } else {
+                elements.container.classList.remove('font-retro');
+                elements.sub.classList.remove('font-retro');
+            }
+        }
+
+        function updateRangeValues() {
+            elements.speedVal.textContent = elements.speed.value + 'ms';
+            elements.pitchVal.textContent = elements.pitch.value + 'Hz';
+        }
+
+        function saveSettings() {
+            const settings = { speed: elements.speed.value, pitch: elements.pitch.value, wave: elements.wave.value, lang: elements.lang.value };
+            localStorage.setItem('angelVoiceSettings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('angelVoiceSettings');
+            if (saved) {
+                const s = JSON.parse(saved);
+                elements.speed.value = s.speed; elements.pitch.value = s.pitch;
+                elements.wave.value = s.wave; elements.lang.value = s.lang;
+            }
+            updateRangeValues();
+            updateLang();
+        }
+
+        function initAudio() { if (!audioCtx) { audioCtx = new AudioContext(); dest = audioCtx.createMediaStreamDestination(); } }
+
+        function playBeep(pitchModifier = 1) {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = elements.wave.value;
+            const basePitch = parseInt(elements.pitch.value);
+            osc.frequency.setValueAtTime((basePitch * pitchModifier) + (Math.random()*40-20), audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            osc.connect(gain); gain.connect(audioCtx.destination); gain.connect(dest);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        async function typeWriter(text, record = false) {
+            isPlaying = true; elements.display.textContent = "";
+            if (record) { 
+                chunks = []; mediaRecorder = new MediaRecorder(dest.stream); 
+                mediaRecorder.ondataavailable = e => chunks.push(e.data); 
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'audio/wav' });
+                    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
+                    a.download = `angel_voice_${Date.now()}.wav`; a.click();
+                }; 
+                mediaRecorder.start(); 
+            }
+            const chars = Array.from(text);
+            for (let i = 0; i < chars.length; i++) {
+                if (!isPlaying) break;
+                const char = chars[i];
+                elements.display.textContent += char;
+                let delay = parseInt(elements.speed.value);
+                let pitchMod = 1.0;
+                const isPunctuation = /[\s,.?!~~\-…()]/.test(char);
+                if (!isPunctuation) {
+                    if (i < chars.length - 1 && chars[i+1] === '!') pitchMod = 1.3;
+                    if (text.includes('...', i-2)) pitchMod = 0.8;
+                    playBeep(pitchMod);
+                } else {
+                    if (['.', '?', '!'].includes(char)) delay *= 4;
+                    else if ([',', '~', '-'].includes(char)) delay *= 2.5;
+                }
+                await new Promise(r => timeoutId = setTimeout(r, delay));
+            }
+            if (record && mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+            isPlaying = false;
+        }
+
+        elements.lang.addEventListener('change', () => { updateLang(); saveSettings(); });
+        [elements.speed, elements.pitch].forEach(el => el.addEventListener('input', () => { updateRangeValues(); saveSettings(); }));
+        elements.wave.addEventListener('change', saveSettings);
+        
+        elements.play.addEventListener('click', () => { initAudio(); if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder); });
+        elements.save.addEventListener('click', () => { initAudio(); if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder, true); });
+        elements.input.addEventListener('focus', () => { if(elements.input.value === i18n[elements.lang.value].placeholder) elements.input.value = ""; });
+
+        loadSettings();
+    </script>
+</body>
+</html>
