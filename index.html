@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- SEO 및 사이트 설정 -->
     <title>Angel Text Voice - 8-bit Sound Generator</title>
     <meta name="description" content="8-bit sound generator. Create retro game dialogue sounds and save as WAV.">
-    <meta name="keywords" content="8비트 효과음 생성기, 8-bit Sound Generator, Text to Beep, Retro SFX, RPG Voice Maker">
-    <meta name="author" content="toramxoxo">
     
-    <meta property="og:title" content="Angel Text Voice - 8-bit Sound Generator">
-    <meta property="og:description" content="Create your own retro game voice with one click.">
-    <meta property="og:type" content="website">
-
+    <!-- 파비콘 설정 -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -22,6 +20,7 @@
             color: #5d4037;
             font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif;
             min-height: 100vh;
+            margin: 0;
         }
 
         .font-retro {
@@ -49,37 +48,31 @@
         input[type="range"] { accent-color: #f06292; }
         .btn-pastel { transition: all 0.2s; box-shadow: 2px 2px 0px #888; }
         .btn-pastel:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #888; }
-        
-        .lang-text { font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif; }
 
-        /* 이미지 보안 및 스타일 설정 */
+        /* 이미지 보안 설정 및 애니메이션 */
         .wing-img {
             width: 60px;
             height: auto;
             object-fit: contain;
             filter: drop-shadow(2px 2px 0px rgba(255, 255, 255, 0.8));
-            
-            /* 보안 설정: 우클릭 금지 및 드래그 금지 */
             -webkit-touch-callout: none;
             -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
-            pointer-events: none; /* 마우스 클릭 이벤트 무시 */
+            pointer-events: none;
         }
         
-        .wing-left { 
-            transform: scaleX(-1); 
+        /* 왼쪽 날개 애니메이션 (wing_left.png) */
+        .wing-left-anim { 
             animation: floatLeft 3s ease-in-out infinite; 
         }
-        .wing-right { 
+        /* 오른쪽 날개 애니메이션 (wing_right.png) */
+        .wing-right-anim { 
             animation: floatRight 3s ease-in-out infinite; 
         }
 
         @keyframes floatLeft {
-            0%, 100% { transform: scaleX(-1) translateY(0); }
-            50% { transform: scaleX(-1) translateY(-10px); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         @keyframes floatRight {
             0%, 100% { transform: translateY(0); }
@@ -87,8 +80,8 @@
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center p-6 relative">
-    <div class="absolute top-6 right-6 lang-text">
+<body class="flex flex-col items-center justify-center p-6 relative" oncontextmenu="return false;">
+    <div class="absolute top-6 right-6">
         <select id="lang-select" class="bg-white/80 border border-pink-200 p-2 rounded-lg text-xs outline-none cursor-pointer">
             <option value="ko">한국어 (KO)</option>
             <option value="en">English (EN)</option>
@@ -100,11 +93,13 @@
     <div class="max-w-3xl w-full space-y-8 z-10 mt-12">
         <header class="flex flex-col items-center">
             <div class="flex items-center justify-center gap-4 mb-2">
-                <img src="wing.png" class="wing-img wing-left" alt="Wing" oncontextmenu="return false;">
+                <!-- 왼쪽 날개 이미지 변경 -->
+                <img src="wing_left.png" class="wing-img wing-left-anim" alt="Wing Left">
                 
                 <h1 id="main-title" class="text-xl md:text-2xl text-pink-400 drop-shadow-sm font-retro text-center">ANGEL TEXT VOICE</h1>
                 
-                <img src="wing.png" class="wing-img wing-right" alt="Wing" oncontextmenu="return false;">
+                <!-- 오른쪽 날개 이미지 변경 -->
+                <img src="wing_right.png" class="wing-img wing-right-anim" alt="Wing Right">
             </div>
             <p id="sub-title" class="text-[10px] text-blue-400 uppercase tracking-widest font-bold">꿈결 같은 8비트 효과음 생성기</p>
         </header>
@@ -170,7 +165,7 @@
         const i18n = {
             ko: { sub: "꿈결 같은 8비트 효과음 생성기", speed: "타이핑 속도", pitch: "음 높이 (피치)", tone: "음색 선택", start: "재생", save: "저장 (WAV)", placeholder: "여기에 대사를 입력하세요...", guide: "저장 버튼을 누르면 이 대사의 소리가 WAV 파일로 저장됩니다." },
             en: { sub: "Dreamy 8-bit sound creator", speed: "Typing Speed", pitch: "Voice Pitch", tone: "Tone Type", start: "Start", save: "Save WAV", placeholder: "Please enter your text here...", guide: "Click SAVE WAV to save the sound of this dialogue as a WAV file." },
-            jp: { sub: "夢のような8ビット効果音メーカー", speed: "タイピング速度", pitch: "音の高さ", tone: "音色の種類", start: "再生", save: "保存 (WAV)", placeholder: "ここにテキストを入力してください...", guide: "保存ボタンを押すと、この台詞がWAVファイルとして保存されます。" },
+            jp: { sub: "夢のような8ビット効果음メーカー", speed: "타이핑速度", pitch: "音의高さ", tone: "音色の種類", start: "再生", save: "保存 (WAV)", placeholder: "ここにテキストを入力してください...", guide: "保存ボタンを押すと、この台詞がWAVファイルとして保存されます。" },
             cn: { sub: "梦幻8位元声音生成器", speed: "打字速度", pitch: "音高", tone: "音色类型", start: "开始", save: "保存 (WAV)", placeholder: "请在这里输入文字...", guide: "点击保存按钮，将此对话保存为WAV文件。" }
         };
 
@@ -178,7 +173,6 @@
 
         const elements = {
             lang: document.getElementById('lang-select'), 
-            mainTitle: document.getElementById('main-title'),
             sub: document.getElementById('sub-title'),
             lSpeed: document.getElementById('label-speed'), 
             lPitch: document.getElementById('label-pitch'),
@@ -206,35 +200,11 @@
             elements.save.textContent = l.save;
             elements.input.placeholder = l.placeholder;
             if(!isPlaying) elements.display.textContent = l.guide;
-
-            if (selectedLang === 'en') {
-                elements.container.classList.add('font-retro');
-                elements.sub.classList.add('font-retro');
-            } else {
-                elements.container.classList.remove('font-retro');
-                elements.sub.classList.remove('font-retro');
-            }
         }
 
         function updateRangeValues() {
             elements.speedVal.textContent = elements.speed.value + 'ms';
             elements.pitchVal.textContent = elements.pitch.value + 'Hz';
-        }
-
-        function saveSettings() {
-            const settings = { speed: elements.speed.value, pitch: elements.pitch.value, wave: elements.wave.value, lang: elements.lang.value };
-            localStorage.setItem('angelVoiceSettings', JSON.stringify(settings));
-        }
-
-        function loadSettings() {
-            const saved = localStorage.getItem('angelVoiceSettings');
-            if (saved) {
-                const s = JSON.parse(saved);
-                elements.speed.value = s.speed; elements.pitch.value = s.pitch;
-                elements.wave.value = s.wave; elements.lang.value = s.lang;
-            }
-            updateRangeValues();
-            updateLang();
         }
 
         function initAudio() { if (!audioCtx) { audioCtx = new AudioContext(); dest = audioCtx.createMediaStreamDestination(); } }
@@ -284,15 +254,13 @@
             isPlaying = false;
         }
 
-        elements.lang.addEventListener('change', () => { updateLang(); saveSettings(); });
-        [elements.speed, elements.pitch].forEach(el => el.addEventListener('input', () => { updateRangeValues(); saveSettings(); }));
-        elements.wave.addEventListener('change', saveSettings);
-        
+        elements.lang.addEventListener('change', updateLang);
+        [elements.speed, elements.pitch].forEach(el => el.addEventListener('input', updateRangeValues));
         elements.play.addEventListener('click', () => { initAudio(); if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder); });
         elements.save.addEventListener('click', () => { initAudio(); if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder, true); });
-        elements.input.addEventListener('focus', () => { if(elements.input.value === i18n[elements.lang.value].placeholder) elements.input.value = ""; });
-
-        loadSettings();
+        
+        updateRangeValues();
+        updateLang();
     </script>
 </body>
 </html>
