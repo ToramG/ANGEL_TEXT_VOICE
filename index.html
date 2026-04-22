@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Angel Text Voice - 8-bit Sound Generator</title>
-    <meta name="description" content="8-bit sound generator with precise controls.">
+    <meta name="description" content="8-bit sound generator with precise controls and custom save paths.">
     
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,7 +43,6 @@
         .btn-pastel { transition: all 0.2s; box-shadow: 2px 2px 0px #888; }
         .btn-pastel:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #888; }
 
-        /* 입력창 스타일 */
         .num-input {
             background: #fff;
             border: 2px solid #f8bbd0;
@@ -130,10 +129,10 @@
                             <option value="square">Retro Square</option>
                             <option value="sawtooth">Sharp Sawtooth</option>
                         </optgroup>
-                        <optgroup label="Heavy & Low (New!)">
-                            <option value="deep_bass">Deep Bass (Octave-)</option>
-                            <option value="power_saw">Power Saw (Heavier)</option>
-                            <option value="low_rumble">Low Rumble (Bass)</option>
+                        <optgroup label="Heavy & Low">
+                            <option value="deep_bass">Deep Bass</option>
+                            <option value="power_saw">Power Saw</option>
+                            <option value="low_rumble">Low Rumble</option>
                         </optgroup>
                     </select>
                 </label>
@@ -159,10 +158,10 @@
 
     <script>
         const i18n = {
-            ko: { sub: "꿈결 같은 8비트 효과음 생성기", speed: "타이핑 속도", pitch: "음 높이 (피치)", tone: "음색 선택", start: "재생", save: "저장 (WAV)", placeholder: "여기에 대사를 입력하세요...", guide: "저장 버튼을 누르면 이 대사의 소리가 WAV 파일로 저장됩니다." },
-            en: { sub: "Dreamy 8-bit sound creator", speed: "Typing Speed", pitch: "Voice Pitch", tone: "Tone Type", start: "Start", save: "Save WAV", placeholder: "Please enter your text here...", guide: "Click SAVE WAV to save the sound of this dialogue as a WAV file." },
-            jp: { sub: "夢のような8ビット効果音メーカー", speed: "タイ핑速度", pitch: "音の高さ", tone: "音色の種類", start: "再生", save: "保存 (WAV)", placeholder: "ここにテキストを入力してください...", guide: "保存 버튼을 누르면 이 台詞가 WAV 파일로 저장됩니다." },
-            cn: { sub: "梦幻8位元声音生成器", speed: "打字速度", pitch: "音高", tone: "音色类型", start: "开始", save: "保存 (WAV)", placeholder: "请在这里输入文字...", guide: "点击保存按钮，将此对话保存为WAV文件。" }
+            ko: { sub: "꿈결 같은 8비트 효과음 생성기", speed: "타이핑 속도", pitch: "음 높이 (피치)", tone: "음색 선택", start: "재생", save: "저장 (WAV)", placeholder: "여기에 대사를 입력하세요...", guide: "저장 버튼을 누르면 경로를 지정하여 WAV 파일로 저장할 수 있습니다." },
+            en: { sub: "Dreamy 8-bit sound creator", speed: "Typing Speed", pitch: "Voice Pitch", tone: "Tone Type", start: "Start", save: "Save WAV", placeholder: "Please enter your text here...", guide: "Click SAVE WAV to choose a location and save the dialogue." },
+            jp: { sub: "夢のような8ビット効果음メーカー", speed: "タイピング速度", pitch: "音の高さ", tone: "音色の種類", start: "再生", save: "保存 (WAV)", placeholder: "ここにテキストを入力してください...", guide: "保存 버튼을 누르면 経路를 指定하여 WAV 파일로 저장할 수 있습니다." },
+            cn: { sub: "梦幻8位元声音生成器", speed: "打字速度", pitch: "音高", tone: "音色类型", start: "开始", save: "保存 (WAV)", placeholder: "请在这里输入文字...", guide: "点击保存按钮，选择路径将此对话保存为WAV文件。" }
         };
 
         let audioCtx = null, isPlaying = false, timeoutId = null, dest = null, mediaRecorder = null, chunks = [];
@@ -187,7 +186,6 @@
             if(!isPlaying) elements.display.textContent = l.guide;
         }
 
-        // 수치 동기화 함수
         function syncValues(type) {
             if(type === 'speed') {
                 elements.speedNum.value = elements.speed.value;
@@ -203,16 +201,10 @@
             let waveType = elements.wave.value;
             let finalPitch = parseInt(elements.pitch.value) * pitchModifier;
 
-            // 새로운 '묵직한' 사운드 로직
-            if (waveType === 'deep_bass') { 
-                osc.type = 'square'; finalPitch *= 0.5; // 한 옥타브 아래
-            } else if (waveType === 'power_saw') { 
-                osc.type = 'sawtooth'; finalPitch *= 0.8;
-            } else if (waveType === 'low_rumble') { 
-                osc.type = 'triangle'; finalPitch *= 0.4;
-            } else {
-                osc.type = waveType;
-            }
+            if (waveType === 'deep_bass') { osc.type = 'square'; finalPitch *= 0.5; }
+            else if (waveType === 'power_saw') { osc.type = 'sawtooth'; finalPitch *= 0.8; }
+            else if (waveType === 'low_rumble') { osc.type = 'triangle'; finalPitch *= 0.4; }
+            else { osc.type = waveType; }
 
             osc.frequency.setValueAtTime(finalPitch + (Math.random()*20-10), audioCtx.currentTime);
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
@@ -221,16 +213,31 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.15);
         }
 
+        async function saveFile(blob) {
+            const fileName = `angel_voice_${Date.now()}.wav`;
+            if ('showSaveFilePicker' in window) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: fileName,
+                        types: [{ description: 'WAV Audio File', accept: { 'audio/wav': ['.wav'] } }],
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                }
+            }
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
+        }
+
         async function typeWriter(text, record = false) {
             isPlaying = true; elements.display.textContent = "";
             if (record) { 
                 chunks = []; mediaRecorder = new MediaRecorder(dest.stream); 
                 mediaRecorder.ondataavailable = e => chunks.push(e.data); 
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: 'audio/wav' });
-                    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
-                    a.download = `angel_voice_${Date.now()}.wav`; a.click();
-                }; 
+                mediaRecorder.onstop = async () => { await saveFile(new Blob(chunks, { type: 'audio/wav' })); }; 
                 mediaRecorder.start(); 
             }
             const chars = Array.from(text);
@@ -247,14 +254,10 @@
             isPlaying = false;
         }
 
-        // 이벤트 리스너: 슬라이더 조작 시 숫자창 업데이트
         elements.speed.oninput = () => syncValues('speed');
         elements.pitch.oninput = () => syncValues('pitch');
-        
-        // 이벤트 리스너: 숫자 직접 입력 시 슬라이더 업데이트
         elements.speedNum.oninput = () => { elements.speed.value = elements.speedNum.value; };
         elements.pitchNum.oninput = () => { elements.pitch.value = elements.pitchNum.value; };
-
         elements.lang.onchange = updateLang;
         elements.play.onclick = () => { initAudio(); if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder); };
         elements.save.onclick = () => { initAudio(); if(isPlaying) { isPlaying = false; clearTimeout(timeoutId); } typeWriter(elements.input.value || i18n[elements.lang.value].placeholder, true); };
